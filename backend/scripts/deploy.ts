@@ -5,7 +5,7 @@ async function main() {
 
   await voting.waitForDeployment();
 
-  console.log('Voting deployed');
+  console.log(`Voting deployed ${voting.target}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
