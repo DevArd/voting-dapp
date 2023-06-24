@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-/// @title A voting contract
-/// @author ibourn
+/// @title A voting smart contract
+/// @author Arnaud Planas & Florent Romé
 /// @notice You can use this contract for only one vote
-/// @inheritdoc Ownable
+/// @inheritdoc Extends the Ownable contract from OpenZeppelin
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 contract Voting is Ownable {
-    /// @notice Winning proposal id
-    uint public winningProposalID;
+    /// @notice Winning proposal id. The most voted proposal
+    uint8 public winningProposalID;
 
     /// @notice Voter struct
     /// @param isRegistered Voter is registered
@@ -36,14 +36,12 @@ contract Voting is Ownable {
     /// @param ProposalsRegistrationEnded Proposals registration ended
     /// @param VotingSessionStarted Voting session started
     /// @param VotingSessionEnded Voting session ended
-    /// @param VotesTallied Votes tallied
     enum WorkflowStatus {
         RegisteringVoters,
         ProposalsRegistrationStarted,
         ProposalsRegistrationEnded,
         VotingSessionStarted,
-        VotingSessionEnded,
-        VotesTallied
+        VotingSessionEnded
     }
 
     /// @notice Workflow status
@@ -65,10 +63,10 @@ contract Voting is Ownable {
     );
     /// @notice Proposal registered event
     /// @param proposalId Proposal id
-    event ProposalRegistered(uint proposalId);
+    event ProposalRegistered(uint8 proposalId);
     /// @notice Voted event
     /// @param voter Voter address
-    event Voted(address voter, uint proposalId);
+    event Voted(address voter, uint8 proposalId);
 
     /// @notice Only voters modifier
     modifier onlyVoters() {
@@ -79,7 +77,7 @@ contract Voting is Ownable {
     // ::::::::::::: GETTERS ::::::::::::: //
     /// @notice Get voter's information by his address, only voters
     /// @param _addr Voter address
-    /// @return Voter Voter
+    /// @return The voter's informations
     function getVoter(
         address _addr
     ) external view onlyVoters returns (Voter memory) {
@@ -90,9 +88,20 @@ contract Voting is Ownable {
     /// @param _id Proposal id
     /// @return Proposal Proposal
     function getOneProposal(
-        uint _id
+        uint8 _id
     ) external view onlyVoters returns (Proposal memory) {
         return proposalsArray[_id];
+    }
+
+    /// @notice Get the winning proposal
+    /// @return The winning proposal
+    function getWinningProposal()
+        external
+        view
+        onlyVoters
+        returns (Proposal memory)
+    {
+        return proposalsArray[winningProposalID];
     }
 
     // ::::::::::::: REGISTRATION ::::::::::::: //
@@ -126,13 +135,13 @@ contract Voting is Ownable {
         Proposal memory proposal;
         proposal.description = _desc;
         proposalsArray.push(proposal);
-        emit ProposalRegistered(proposalsArray.length - 1);
+        emit ProposalRegistered(uint8(proposalsArray.length - 1));
     }
 
     // ::::::::::::: VOTE ::::::::::::: //
     /// @notice Set the vote of 'msg.sender', only voters, emit Voted. should be called only when workflowStatus is VotingSessionStarted should be called only once for each voter and for a registered proposal
     /// @param _id Proposal id
-    function setVote(uint _id) external onlyVoters {
+    function setVote(uint8 _id) external onlyVoters {
         require(
             workflowStatus == WorkflowStatus.VotingSessionStarted,
             "Voting session havent started yet"
@@ -143,6 +152,14 @@ contract Voting is Ownable {
         voters[msg.sender].votedProposalId = _id;
         voters[msg.sender].hasVoted = true;
         proposalsArray[_id].voteCount++;
+
+        // Set the new potential winner if the voteCount is higher
+        if (
+            proposalsArray[_id].voteCount >
+            proposalsArray[winningProposalID].voteCount
+        ) {
+            winningProposalID = _id;
+        }
 
         emit Voted(msg.sender, _id);
     }
@@ -159,6 +176,7 @@ contract Voting is Ownable {
         Proposal memory proposal;
         proposal.description = "GENESIS";
         proposalsArray.push(proposal);
+        emit ProposalRegistered(0);
 
         emit WorkflowStatusChange(
             WorkflowStatus.RegisteringVoters,
@@ -206,28 +224,29 @@ contract Voting is Ownable {
         );
     }
 
-    /// @notice Tally votes, only owner, emit WorkflowStatusChange.
-    /// stores winningProposalID should be called only when workflowStatus is VotingSessionEnded
-    function tallyVotes() external onlyOwner {
-        require(
-            workflowStatus == WorkflowStatus.VotingSessionEnded,
-            "Current status is not voting session ended"
-        );
-        uint _winningProposalId;
-        for (uint256 p = 0; p < proposalsArray.length; p++) {
-            if (
-                proposalsArray[p].voteCount >
-                proposalsArray[_winningProposalId].voteCount
-            ) {
-                _winningProposalId = p;
-            }
-        }
-        winningProposalID = _winningProposalId;
+    // Moove the _winningProposalId resolver to voting phase to avoid DoS Gas Limit attack.
+    // /// @notice Tally votes, only owner, emit WorkflowStatusChange.
+    // /// stores winningProposalID should be called only when workflowStatus is VotingSessionEnded
+    // function tallyVotes() external onlyOwner {
+    //     require(
+    //         workflowStatus == WorkflowStatus.VotingSessionEnded,
+    //         "Current status is not voting session ended"
+    //     );
+    //     uint _winningProposalId;
+    //     for (uint256 p = 0; p < proposalsArray.length; p++) {
+    //         if (
+    //             proposalsArray[p].voteCount >
+    //             proposalsArray[_winningProposalId].voteCount
+    //         ) {
+    //             _winningProposalId = p;
+    //         }
+    //     }
+    //     winningProposalID = _winningProposalId;
 
-        workflowStatus = WorkflowStatus.VotesTallied;
-        emit WorkflowStatusChange(
-            WorkflowStatus.VotingSessionEnded,
-            WorkflowStatus.VotesTallied
-        );
-    }
+    //     workflowStatus = WorkflowStatus.VotesTallied;
+    //     emit WorkflowStatusChange(
+    //         WorkflowStatus.VotingSessionEnded,
+    //         WorkflowStatus.VotesTallied
+    //     );
+    // }
 }

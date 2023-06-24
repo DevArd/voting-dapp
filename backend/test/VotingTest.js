@@ -214,54 +214,55 @@ describe("Voting contract", function () {
     })
   })
 
-  describe("Tallying Phase", function () {
-    async function deployVotingTallyingFixture() {
-      const { voting, owner, voter1, voter2, voter3 } = await deployVotingFixture();
-      await voting.connect(owner).addVoter(voter1)
-      await voting.connect(owner).addVoter(voter2)
-      await voting.connect(owner).addVoter(voter3)
-      await voting.connect(owner).startProposalsRegistering()
-      await voting.connect(voter1).addProposal("voter1Proposal")
-      await voting.connect(voter2).addProposal("voter2Proposal")
-      await voting.connect(voter3).addProposal("voter3Proposal")
-      await voting.connect(owner).endProposalsRegistering()
-      await voting.connect(owner).startVotingSession()
-      await voting.connect(voter1).setVote(1)
-      await voting.connect(voter2).setVote(2)
-      await voting.connect(voter3).setVote(2)
-      return { voting, owner, voter1, voter2, voter3 };
-    }
+  // Moove the _winningProposalId resolver to voting phase to avoid DoS Gas Limit attack.
+  // describe("Tallying Phase", function () {
+  //   async function deployVotingTallyingFixture() {
+  //     const { voting, owner, voter1, voter2, voter3 } = await deployVotingFixture();
+  //     await voting.connect(owner).addVoter(voter1)
+  //     await voting.connect(owner).addVoter(voter2)
+  //     await voting.connect(owner).addVoter(voter3)
+  //     await voting.connect(owner).startProposalsRegistering()
+  //     await voting.connect(voter1).addProposal("voter1Proposal")
+  //     await voting.connect(voter2).addProposal("voter2Proposal")
+  //     await voting.connect(voter3).addProposal("voter3Proposal")
+  //     await voting.connect(owner).endProposalsRegistering()
+  //     await voting.connect(owner).startVotingSession()
+  //     await voting.connect(voter1).setVote(1)
+  //     await voting.connect(voter2).setVote(2)
+  //     await voting.connect(voter3).setVote(2)
+  //     return { voting, owner, voter1, voter2, voter3 };
+  //   }
 
-    it('Test on require: tally vote cant be done if not in the right worfkflow status', async function () {
-      const { voting, owner } = await deployVotingTallyingFixture();
-      await expect(voting.connect(owner).tallyVotes()).to.be.revertedWith("Current status is not voting session ended");
-    })
+  //   it('Test on require: tally vote cant be done if not in the right worfkflow status', async function () {
+  //     const { voting, owner } = await deployVotingTallyingFixture();
+  //     await expect(voting.connect(owner).tallyVotes()).to.be.revertedWith("Current status is not voting session ended");
+  //   })
 
-    it('Test on require: not the owner', async function () {
-      const { voting, owner, voter1 } = await deployVotingTallyingFixture();
-      await voting.connect(owner).endVotingSession()
-      await expect(voting.connect(voter1).tallyVotes()).to.be.revertedWith("Ownable: caller is not the owner");
-    })
+  //   it('Test on require: not the owner', async function () {
+  //     const { voting, owner, voter1 } = await deployVotingTallyingFixture();
+  //     await voting.connect(owner).endVotingSession()
+  //     await expect(voting.connect(voter1).tallyVotes()).to.be.revertedWith("Ownable: caller is not the owner");
+  //   })
 
-    it('Tally pass, test on event on workflow status', async function () {
-      const { voting, owner } = await deployVotingTallyingFixture();
-      await voting.connect(owner).endVotingSession()
-      let receipt = await voting.connect(owner).tallyVotes();
-      await expect(receipt)
-        .to.emit(voting, "WorkflowStatusChange")
-        .withArgs(4, 5);
-    })
+  //   it('Tally pass, test on event on workflow status', async function () {
+  //     const { voting, owner } = await deployVotingTallyingFixture();
+  //     await voting.connect(owner).endVotingSession()
+  //     let receipt = await voting.connect(owner).tallyVotes();
+  //     await expect(receipt)
+  //       .to.emit(voting, "WorkflowStatusChange")
+  //       .withArgs(4, 5);
+  //   })
 
-    it('Tally pass, test on winning proposal description and vote count', async function () {
-      const { voting, owner, voter1 } = await deployVotingTallyingFixture();
-      await voting.connect(owner).endVotingSession()
-      await voting.connect(owner).tallyVotes();
-      let winningID = await voting.winningProposalID.call();
-      let winningProposal = await voting.connect(voter1).getOneProposal(winningID);
-      expect(winningProposal.description).to.equal('voter2Proposal');
-      expect(winningProposal.voteCount).to.equal('2');
-    })
-  })
+  //   it('Tally pass, test on winning proposal description and vote count', async function () {
+  //     const { voting, owner, voter1 } = await deployVotingTallyingFixture();
+  //     await voting.connect(owner).endVotingSession()
+  //     await voting.connect(owner).tallyVotes();
+  //     let winningID = await voting.winningProposalID.call();
+  //     let winningProposal = await voting.connect(voter1).getOneProposal(winningID);
+  //     expect(winningProposal.description).to.equal('voter2Proposal');
+  //     expect(winningProposal.voteCount).to.equal('2');
+  //   })
+  // })
 
   describe("Worfklow status tests", function () {
     // could do both test for every worflowStatus
