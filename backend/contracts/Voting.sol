@@ -10,9 +10,9 @@ import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 contract Voting is Ownable {
     /// @notice Voter struct
-    /// @param isRegistered Voter is registered
-    /// @param hasVoted Voter has voted
-    /// @param votedProposalId Voter voted proposal id
+    /// @param isRegistered. If voter is registered
+    /// @param hasVoted. If voter has voted
+    /// @param votedProposalId. Voter voted proposal id
     struct Voter {
         bool isRegistered;
         bool hasVoted;
@@ -33,12 +33,14 @@ contract Voting is Ownable {
     /// @param ProposalsRegistrationEnded Proposals registration ended
     /// @param VotingSessionStarted Voting session started
     /// @param VotingSessionEnded Voting session ended
+    /// @param VotesTallied Votes tallied
     enum WorkflowStatus {
         RegisteringVoters,
         ProposalsRegistrationStarted,
         ProposalsRegistrationEnded,
         VotingSessionStarted,
-        VotingSessionEnded
+        VotingSessionEnded,
+        VotesTallied
     }
 
     /// @notice Winning proposal id. The most voted proposal. 0 by default.
@@ -46,14 +48,17 @@ contract Voting is Ownable {
 
     /// @notice Workflow status
     WorkflowStatus public workflowStatus;
+
     /// @notice Proposals array
     Proposal[] private proposalsArray;
+
     /// @notice Voters mapping
     mapping(address => Voter) private voters;
 
     /// @notice Voter registered event
     /// @param voterAddress Voter address
     event VoterRegistered(address voterAddress);
+
     /// @notice Workflow status change event
     /// @param previousStatus Previous workflow status
     /// @param newStatus New workflow status
@@ -61,9 +66,11 @@ contract Voting is Ownable {
         WorkflowStatus previousStatus,
         WorkflowStatus newStatus
     );
+
     /// @notice Proposal registered event
     /// @param proposalId Proposal id
     event ProposalRegistered(uint8 proposalId);
+
     /// @notice Voted event
     /// @param voter Voter address
     event Voted(address voter, uint8 proposalId);

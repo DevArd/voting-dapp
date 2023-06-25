@@ -1,12 +1,13 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
+require('hardhat-docgen');
+require("hardhat-gas-reporter");
 
 const SEPOLIA_PRIVATE_KEY = process.env.SEPOLIA_PRIVATE_KEY || ""
 const INFURA_API_KEY = process.env.INFURA_API_KEY || ""
 const ETHERSCAN = process.env.ETHERSCAN || ""
 
-const config: HardhatUserConfig = {
+module.exports = {
   defaultNetwork: "localhost",
   networks: {
     localhost: {
@@ -24,12 +25,22 @@ const config: HardhatUserConfig = {
       sepolia: ETHERSCAN
     }
   },
+  docgen: {
+    path: './docs',
+    clear: true,
+    runOnCompile: true,
+  },
   solidity: {
-    version: "0.8.20", // any version you want
+    compilers: [
+      {
+        version: "0.8.20"
+      }
+    ],
     settings: {
       viaIR: true,
       optimizer: {
         enabled: true,
+        runs: 200,
         details: {
           yulDetails: {
             optimizerSteps: "u",
@@ -39,5 +50,3 @@ const config: HardhatUserConfig = {
     },
   }
 };
-
-export default config;
