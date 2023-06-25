@@ -1,4 +1,4 @@
-export const contract = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
+export const contract = '0x40ED11741F5d7F8d97BF3535E3Ba2c8D755ad858'
 export const abi = [
     {
         "anonymous": false,
@@ -177,37 +177,12 @@ export const abi = [
                         "type": "bool"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "uint8",
                         "name": "votedProposalId",
-                        "type": "uint256"
+                        "type": "uint8"
                     }
                 ],
                 "internalType": "struct Voting.Voter",
-                "name": "",
-                "type": "tuple"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getWinningProposal",
-        "outputs": [
-            {
-                "components": [
-                    {
-                        "internalType": "string",
-                        "name": "description",
-                        "type": "string"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "voteCount",
-                        "type": "uint256"
-                    }
-                ],
-                "internalType": "struct Voting.Proposal",
                 "name": "",
                 "type": "tuple"
             }

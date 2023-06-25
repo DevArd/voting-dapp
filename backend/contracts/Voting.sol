@@ -9,9 +9,6 @@ pragma solidity 0.8.20;
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
 contract Voting is Ownable {
-    /// @notice Winning proposal id. The most voted proposal
-    uint8 public winningProposalID;
-
     /// @notice Voter struct
     /// @param isRegistered Voter is registered
     /// @param hasVoted Voter has voted
@@ -19,7 +16,7 @@ contract Voting is Ownable {
     struct Voter {
         bool isRegistered;
         bool hasVoted;
-        uint votedProposalId;
+        uint8 votedProposalId;
     }
 
     /// @notice Proposal struct
@@ -44,12 +41,15 @@ contract Voting is Ownable {
         VotingSessionEnded
     }
 
+    /// @notice Winning proposal id. The most voted proposal. 0 by default.
+    uint8 public winningProposalID;
+
     /// @notice Workflow status
     WorkflowStatus public workflowStatus;
     /// @notice Proposals array
-    Proposal[] proposalsArray;
+    Proposal[] private proposalsArray;
     /// @notice Voters mapping
-    mapping(address => Voter) voters;
+    mapping(address => Voter) private voters;
 
     /// @notice Voter registered event
     /// @param voterAddress Voter address
@@ -91,17 +91,6 @@ contract Voting is Ownable {
         uint8 _id
     ) external view onlyVoters returns (Proposal memory) {
         return proposalsArray[_id];
-    }
-
-    /// @notice Get the winning proposal
-    /// @return The winning proposal
-    function getWinningProposal()
-        external
-        view
-        onlyVoters
-        returns (Proposal memory)
-    {
-        return proposalsArray[winningProposalID];
     }
 
     // ::::::::::::: REGISTRATION ::::::::::::: //
