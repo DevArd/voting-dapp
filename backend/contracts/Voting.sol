@@ -39,8 +39,7 @@ contract Voting is Ownable {
         ProposalsRegistrationStarted,
         ProposalsRegistrationEnded,
         VotingSessionStarted,
-        VotingSessionEnded,
-        VotesTallied
+        VotingSessionEnded
     }
 
     /// @notice Winning proposal id. The most voted proposal. 0 by default.
