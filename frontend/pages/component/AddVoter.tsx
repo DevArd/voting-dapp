@@ -1,20 +1,19 @@
 import { Alert, Divider, IconButton, Snackbar, Stack, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { abi, contract } from '../../Constant';
 import { isAddress } from 'viem'
+import { SnackBarAlert } from './SnackBarAlert';
+import { votingContract } from '../Voting';
 
 const AddVoter = () => {
-  const [voter, setVoter] = useState('')
+  const [voter, setVoter] = useState('');
+  const [alerted, setAlerted] = useState(false);
 
   const {
-    config,
-    error: prepareError,
-    isError: isPrepareError
+    config
   } = usePrepareContractWrite({
-    address: contract,
-    abi: abi,
+    ...votingContract,
     functionName: 'addVoter',
     args: [voter],
     enabled: isAddress(voter),
@@ -25,9 +24,15 @@ const AddVoter = () => {
     hash: data?.hash,
   })
 
-  if (isError) {
-    console.log('error', error);
-  }
+  useEffect(() => {
+    if (isLoading || isError || isSuccess) {
+      setAlerted(true);
+    }
+  }, [isLoading, isError, isSuccess]);
+
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    setAlerted(false);
+  };
 
   return (
     <Stack spacing={2}>
@@ -39,27 +44,7 @@ const AddVoter = () => {
         </IconButton>
       </Stack>
       <Divider />
-      {isSuccess && (
-        <Snackbar autoHideDuration={6000}>
-          <Alert severity="success" >
-            Successfully transaction at <a href={`https://etherscan.io/tx/${data?.hash}`}>etherscan</a>
-          </Alert>
-        </Snackbar>
-      )}
-      {isLoading && (
-        <Snackbar autoHideDuration={6000}>
-          <Alert severity="info">
-            Transaction send at <a href={`https://etherscan.io/tx/${data?.hash}`}>etherscan</a>
-          </Alert>
-        </Snackbar>
-      )}
-      {(isPrepareError || isError) && (
-        <Snackbar autoHideDuration={6000}>
-          <Alert severity="error" >
-            Error: {(prepareError || error)?.message}
-          </Alert>
-        </Snackbar>
-      )}
+      <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`Voter successfully added on transaction ${data?.hash}`} onClose={handleClose}></SnackBarAlert>
     </Stack>
   )
 }

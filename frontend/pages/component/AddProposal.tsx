@@ -1,20 +1,19 @@
 import { Divider, IconButton, Stack, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { abi, contract } from '../../Constant';
+import { SnackBarAlert } from './SnackBarAlert';
+import { votingContract } from '../Voting';
 
 const AddProposal = () => {
 
   const [proposal, setProposal] = useState('');
+  const [alerted, setAlerted] = useState(false);
 
   const {
-    config,
-    error: prepareError,
-    isError: isPrepareError
+    config
   } = usePrepareContractWrite({
-    address: contract,
-    abi: abi,
+    ...votingContract,
     functionName: 'addProposal',
     args: [proposal],
     enabled: Boolean(proposal),
@@ -24,6 +23,16 @@ const AddProposal = () => {
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
   })
+
+  useEffect(() => {
+    if (isLoading || isError || isSuccess) {
+      setAlerted(true);
+    }
+  }, [isLoading, isError, isSuccess]);
+
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    setAlerted(false);
+  };
 
   return (
     <Stack spacing={2} >
@@ -42,6 +51,7 @@ const AddProposal = () => {
         </IconButton>
       </Stack>
       <Divider />
+      <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`Proposal successfully added on transaction ${data?.hash}`} onClose={handleClose}></SnackBarAlert>
     </Stack>
   )
 }

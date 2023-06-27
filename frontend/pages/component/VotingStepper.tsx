@@ -32,11 +32,21 @@ const steps = [
     },
 ];
 
-const VotingStepper = () => {
-    const [activeStep, setActiveStep] = useState(0);
+interface VotingStepperProps {
+    initStepId: number;
+}
+
+const VotingStepper = ({ initStepId }: VotingStepperProps) => {
+    console.log(initStepId)
+    const [activeStep, setActiveStep] = useState(initStepId);
+    const [alerted, setAlerted] = useState(false);
 
     const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
+    };
+
+    const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+        setAlerted(false);
     };
 
     return (
