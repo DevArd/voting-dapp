@@ -1,4 +1,5 @@
-export const contract = '0x40ED11741F5d7F8d97BF3535E3Ba2c8D755ad858'
+export const contract = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'; //'0x40ED11741F5d7F8d97BF3535E3Ba2c8D755ad858'
+// export const contracthardhat = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
 export const abi = [
     {
         "anonymous": false,

@@ -7,8 +7,12 @@ import AddProposal from './component/AddProposal';
 import AddVoter from './component/AddVoter';
 import SetVote from './component/SetVote';
 import GetWinningProposal from './component/GetWinningProposal';
+import { useAccount } from 'wagmi';
 
 const Home: NextPage = () => {
+  const { address, connector, isConnected } = useAccount();
+  console.log('connected', isConnected)
+
   return (
     <div className={styles.container}>
       <Head>
@@ -22,11 +26,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <ConnectButton />
-        <VotingStepper />
-        <AddProposal />
-        <AddVoter />
-        <SetVote />
-        <GetWinningProposal />
+        {isConnected ? <>
+          <VotingStepper />
+          <AddProposal />
+          <AddVoter />
+          <SetVote />
+          <GetWinningProposal />
+        </> : <></>}
       </main>
 
       <footer className={styles.footer}>

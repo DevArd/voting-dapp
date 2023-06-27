@@ -3,32 +3,31 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { sepolia, goerli, mainnet } from 'wagmi/chains';
+import { sepolia, hardhat, goerli } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
-import { infuraProvider } from 'wagmi/providers/infura';
-import * as dotenv from 'dotenv';
-dotenv.config();
+// import { infuraProvider } from 'wagmi/providers/infura';
+// import * as dotenv from 'dotenv';
+// dotenv.config();
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    mainnet,
+    hardhat,
     sepolia,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+    goerli
   ],
   [
-    infuraProvider({ apiKey: `${process.env.INFURA_API_KEY}` }),
     publicProvider(),
   ]
 );
 
 const { connectors } = getDefaultWallets({
   appName: 'Voting Dapp',
-  projectId: 'voting-dapp',
+  projectId: '58c04492c719d703985bce45898088b9',
   chains,
 });
 
 const wagmiConfig = createConfig({
-  autoConnect: true,
+  autoConnect: false,
   connectors,
   publicClient,
   webSocketPublicClient
