@@ -5,8 +5,11 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Divider } from '@mui/material';
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { votingContract } from '../Voting';
+import { SnackBarAlert } from './SnackBarAlert';
 
 const steps = [
     {
@@ -34,16 +37,56 @@ const steps = [
 
 interface VotingStepperProps {
     initStepId: number;
+    onStepChanged: any;
 }
 
-const VotingStepper = ({ initStepId }: VotingStepperProps) => {
-    console.log(initStepId)
-    const [activeStep, setActiveStep] = useState(initStepId);
+const getNextStep = (currentStepId: number) => {
+    switch (currentStepId) {
+        case 0:
+            return { contractName: "startProposalsRegistering", nextStepId: currentStepId + 1 };
+        case 1:
+            return { contractName: "endProposalsRegistering", nextStepId: currentStepId + 1 };
+        case 2:
+            return { contractName: "startVotingSession", nextStepId: currentStepId + 1 };
+        case 3:
+            return { contractName: "endVotingSession", nextStepId: currentStepId + 1 };
+        default:
+            return { contractName: "startProposalsRegistering", nextStepId: 1 };
+    }
+}
+
+const VotingStepper = ({ initStepId: currentStepId, onStepChanged }: VotingStepperProps) => {
+    console.log('initStepId', currentStepId)
+    // const [activeStep, setActiveStep] = useState(initStepId);
     const [alerted, setAlerted] = useState(false);
 
     const handleNext = () => {
-        setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
+        write?.();
     };
+
+    const nextPhase = getNextStep(currentStepId)
+
+    const {
+        config
+    } = usePrepareContractWrite({
+        ...votingContract,
+        functionName: nextPhase.contractName,
+        enabled: currentStepId === nextPhase.nextStepId - 1,
+    })
+
+    const { data, error, isError, write } = useContractWrite(config)
+    const { isLoading, isSuccess } = useWaitForTransaction({
+        hash: data?.hash,
+    })
+
+    useEffect(() => {
+        if (isLoading || isError || isSuccess) {
+            setAlerted(true);
+        }
+        if (isSuccess) {
+            onStepChanged();
+        }
+    }, [isLoading, isError, isSuccess]);
 
     const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
         setAlerted(false);
@@ -53,7 +96,7 @@ const VotingStepper = ({ initStepId }: VotingStepperProps) => {
         <Box sx={{ maxWidth: 400, padding: 2 }}>
             <hr></hr>
             <h1>Voting steps</h1>
-            <Stepper activeStep={activeStep} orientation="vertical" sx={{ padding: 2 }}>
+            <Stepper activeStep={currentStepId} orientation="vertical" sx={{ padding: 2 }}>
                 {steps.map((step, index) => (
                     <Step key={step.label}>
                         <StepLabel
@@ -67,22 +110,23 @@ const VotingStepper = ({ initStepId }: VotingStepperProps) => {
                         </StepLabel>
                         <StepContent>
                             <Typography>{step.description}</Typography>
-                            <Box sx={{ mb: 2 }}>
+                            {index === steps.length - 1 ? <></> : <Box sx={{ mb: 2 }}>
                                 <div>
                                     <Button
                                         variant="contained"
                                         onClick={handleNext}
                                         sx={{ mt: 1, mr: 1 }}
                                     >
-                                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                                        Continue
                                     </Button>
                                 </div>
-                            </Box>
+                            </Box>}
                         </StepContent>
                     </Step>
                 ))}
             </Stepper>
             <Divider />
+            <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`Successfully gone on next step with transaction ${data?.hash}`} onClose={handleClose}></SnackBarAlert>
         </Box>
     );
 }
