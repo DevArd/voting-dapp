@@ -37,6 +37,7 @@ const steps = [
 
 interface VotingStepperProps {
     currentStepId: number;
+    isOwner: boolean;
     handleStepChanged: any;
 }
 
@@ -55,7 +56,7 @@ const getNextStep = (currentStepId: number) => {
     }
 }
 
-const VotingStepper = ({ currentStepId, handleStepChanged }: VotingStepperProps) => {
+const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStepperProps) => {
     const [alerted, setAlerted] = useState(false);
 
     const handleNext = () => {
@@ -109,7 +110,7 @@ const VotingStepper = ({ currentStepId, handleStepChanged }: VotingStepperProps)
                         </StepLabel>
                         <StepContent>
                             <Typography>{step.description}</Typography>
-                            {index === steps.length - 1 ? <></> : <Box sx={{ mb: 2 }}>
+                            {index === steps.length - 1 || !isOwner ? <></> : <Box sx={{ mb: 2 }}>
                                 <div>
                                     <Button
                                         variant="contained"

@@ -86,7 +86,7 @@ function Voting() {
 
     return (
         <>
-            <VotingStepper currentStepId={activeStep} handleStepChanged={() => handleStepChanged()} />
+            <VotingStepper currentStepId={activeStep} handleStepChanged={() => handleStepChanged()} isOwner={isOwner} />
             {activeStep === 0 && isOwner ? <AddVoter /> : <></>}
             {activeStep === 1 && isVoter ? <AddProposal /> : <></>}
             {activeStep === 3 && isVoter ? <SetVote /> : <></>}
