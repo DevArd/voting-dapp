@@ -46,7 +46,7 @@ const SetVote = () => {
     <Stack spacing={2} >
       <h3>Set vote</h3>
       <Stack sx={{ maxWidth: 400 }} direction="row" >
-        <TextField id="outlined-basic" label="Proposal identifier" value={proposalId} onChange={(e) => setProposalId(e.target.value)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
+        <TextField id="outlined-basic" sx={{ width: "100%" }} label="Proposal identifier" value={proposalId} onChange={(e) => setProposalId(e.target.value)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
         <IconButton size="large" color="primary" disabled={!isValidId(proposalId)} onClick={() => write?.()}>
           <PlaylistAddCheckIcon fontSize="large" />
         </IconButton>

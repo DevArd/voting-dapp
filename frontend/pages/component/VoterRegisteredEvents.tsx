@@ -2,7 +2,7 @@ import { votingContract } from '../Voting';
 import { useContractEvent } from 'wagmi';
 import React, { useEffect, useState } from 'react'
 import { isAddress } from 'viem';
-import { Chip, Stack } from '@mui/material';
+import { Chip, Divider, Stack } from '@mui/material';
 
 function VoterRegisteredEvents() {
     const [voterList, setVotersList] = useState<string[]>([]);
@@ -26,12 +26,17 @@ function VoterRegisteredEvents() {
         return () => clearInterval(timerID);
     });
 
-    return (<Stack spacing={1}>
-        <h3>Voter's list</h3>
-        {
-            voterList.length > 0 ? voterList.map((voteraddress, index) => <Chip key={index} label={voteraddress} />) : <></>
-        }
-    </Stack>)
+    return (
+        <>
+            {voterList.length > 0 ? <Stack spacing={1}>
+                <h3>Voter's list</h3>
+                {
+                    voterList.length > 0 ? voterList.map((voteraddress, index) => <Chip key={index} style={{ fontWeight: "bolder"}} color="primary" label={voteraddress} />) : <></>
+                }
+                <Divider />
+            </Stack> : <></>}
+        </>
+    )
 }
 
 export default VoterRegisteredEvents

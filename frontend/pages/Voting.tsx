@@ -10,6 +10,8 @@ import { getAddress } from 'viem'
 import SnackBarAlert from './component/SnackBarAlert'
 import VoterRegisteredEvents from './component/VoterRegisteredEvents'
 import ProposalRegisteredEvents from './component/ProposalRegisteredEvents'
+import { Stack } from '@mui/material'
+import VotedEvents from './component/VotedEvents'
 
 export const votingContract = {
     address: contract,
@@ -82,7 +84,7 @@ function Voting() {
     };
 
     return (
-        <>
+        <Stack maxWidth={'50%'}>
             <VotingStepper currentStepId={activeStep} handleStepChanged={() => handleStepChanged()} isOwner={isOwner} />
             {activeStep === 0 && isOwner ? <AddVoter /> : <></>}
             {activeStep === 1 && isVoter ? <AddProposal /> : <></>}
@@ -90,9 +92,9 @@ function Voting() {
             {activeStep === 4 ? <WinningProposal proposalId={winningProposalId} /> : <></>}
             <VoterRegisteredEvents />
             {activeStep >= 1 ? <ProposalRegisteredEvents /> : <></>}
-
+            {activeStep >= 3 ? <VotedEvents /> : <></>}
             <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`All contract data successfully retrieve`} onClose={handleClose}></SnackBarAlert>
-        </>
+        </Stack>
     )
 }
 

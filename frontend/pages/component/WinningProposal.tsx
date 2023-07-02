@@ -1,4 +1,4 @@
-import { Button, Chip, Divider, Stack } from '@mui/material'
+import { Avatar, Button, Chip, Divider, Stack } from '@mui/material'
 import React, { useEffect } from 'react'
 import { votingContract } from '../Voting'
 import { useContractRead } from 'wagmi'
@@ -19,9 +19,10 @@ const WinningProposal = ({ proposalId }: GetWinningProposalProps) => {
     <>
       {
         isSuccess ?
-          <Stack>
+          <Stack spacing={2}>
             <h3>The winning proposal is</h3>
-            <Chip color="success" label={`${proposalId} - ${(data as any)?.description} with ${(data as any)?.voteCount} votes !`} />
+            <Chip color="success" avatar={<Avatar>{proposalId}</Avatar>} style={{ fontWeight: "bolder" }} label={`${(data as any)?.description} with ${(data as any)?.voteCount} votes !`} />
+            <Divider />
           </Stack>
           : <></>
       }

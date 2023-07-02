@@ -35,10 +35,10 @@ const AddVoter = () => {
   };
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} >
       <h3>Add voter</h3>
-      <Stack direction="row">
-        <TextField id="outlined-basic" label="Voter address" value={voter} onChange={(e) => setVoter(e.target.value)} />
+      <Stack direction="row" width={'100%'}>
+        <TextField sx={{ width: "100%" }} id="outlined-basic" label="Voter address" value={voter} onChange={(e) => setVoter(e.target.value)} />
         <IconButton size="large" color="primary" disabled={!write} onClick={() => write?.()}>
           <PersonAddAlt1Icon fontSize="large" />
         </IconButton>

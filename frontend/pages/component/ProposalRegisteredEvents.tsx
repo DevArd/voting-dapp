@@ -1,8 +1,7 @@
 import { votingContract } from '../Voting';
 import { useContractEvent } from 'wagmi';
 import React, { useEffect, useState } from 'react'
-import { isAddress } from 'viem';
-import { Chip, Stack } from '@mui/material';
+import { Divider, Stack } from '@mui/material';
 import Proposal from './Proposal';
 
 function ProposalRegisteredEvents() {
@@ -27,12 +26,19 @@ function ProposalRegisteredEvents() {
         return () => clearInterval(timerID);
     });
 
-    return (<Stack spacing={1}>
-        <h3>Proposal's list</h3>
-        {
-            proposalList.length > 0 ? proposalList.map((proposalId, index) => <Proposal proposalId={proposalId} key={index} />) : <></>
-        }
-    </Stack>)
+    return (
+        <>
+            {
+                proposalList.length > 0 ? <Stack spacing={1}>
+                    <h3>Proposal's list</h3>
+                    {
+                        proposalList.length > 0 ? proposalList.map((proposalId, index) => <Proposal proposalId={proposalId} key={index} />) : <></>
+                    }
+                    <Divider />
+                </Stack> : <></>
+            }
+        </>
+    )
 }
 
 export default ProposalRegisteredEvents

@@ -40,6 +40,7 @@ const AddProposal = () => {
       <Stack sx={{ maxWidth: 400 }} direction="row" >
         <TextField
           id="outlined-multiline-flexible"
+          sx={{ width: "100%" }}
           label="Proposal description"
           value={proposal}
           onChange={(e) => setProposal(e.target.value)}

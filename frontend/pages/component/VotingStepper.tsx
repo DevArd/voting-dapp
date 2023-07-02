@@ -92,41 +92,43 @@ const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStep
     };
 
     return (
-        <Box sx={{ maxWidth: 400, padding: 2 }}>
-            <hr></hr>
-            <h1>Voting steps</h1>
-            <Stepper activeStep={currentStepId} orientation="vertical" sx={{ padding: 2 }}>
-                {steps.map((step, index) => (
-                    <Step key={step.label}>
-                        <StepLabel
-                            optional={
-                                index === steps.length ? (
-                                    <Typography variant="caption">Last step</Typography>
-                                ) : null
-                            }
-                        >
-                            {step.label}
-                        </StepLabel>
-                        <StepContent>
-                            <Typography>{step.description}</Typography>
-                            {index === steps.length - 1 || !isOwner ? <></> : <Box sx={{ mb: 2 }}>
-                                <div>
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleNext}
-                                        sx={{ mt: 1, mr: 1 }}
-                                    >
-                                        Continue
-                                    </Button>
-                                </div>
-                            </Box>}
-                        </StepContent>
-                    </Step>
-                ))}
-            </Stepper>
+        <>
+            <Box sx={{ maxWidth: 400, padding: 2 }}>
+                <hr></hr>
+                <h1>Voting steps</h1>
+                <Stepper activeStep={currentStepId} orientation="vertical" sx={{ padding: 2 }}>
+                    {steps.map((step, index) => (
+                        <Step key={step.label}>
+                            <StepLabel
+                                optional={
+                                    index === steps.length ? (
+                                        <Typography variant="caption">Last step</Typography>
+                                    ) : null
+                                }
+                            >
+                                {step.label}
+                            </StepLabel>
+                            <StepContent>
+                                <Typography>{step.description}</Typography>
+                                {index === steps.length - 1 || !isOwner ? <></> : <Box sx={{ mb: 2 }}>
+                                    <div>
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleNext}
+                                            sx={{ mt: 1, mr: 1 }}
+                                        >
+                                            Continue
+                                        </Button>
+                                    </div>
+                                </Box>}
+                            </StepContent>
+                        </Step>
+                    ))}
+                </Stepper>
+            </Box>
             <Divider />
             <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`Successfully gone on next step with transaction ${data?.hash}`} onClose={handleClose}></SnackBarAlert>
-        </Box>
+        </>
     );
 }
 

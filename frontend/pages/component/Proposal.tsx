@@ -1,7 +1,7 @@
 import { useContractRead } from 'wagmi';
 import { votingContract } from '../Voting';
 import React from 'react'
-import { Chip } from '@mui/material';
+import { Avatar, Chip } from '@mui/material';
 
 interface ProposalProps {
     proposalId: number
@@ -17,7 +17,7 @@ function Proposal({ proposalId }: ProposalProps) {
     return (
         <>
             {
-                isSuccess ? <Chip key={proposalId} color="primary" variant="outlined" label={`${proposalId} - ${(data as any)?.description}`} /> : <></>
+                isSuccess ? <Chip key={proposalId} style={{ fontWeight: "bolder"}} avatar={<Avatar>{proposalId}</Avatar>} color="primary" label={`${(data as any)?.description}`} /> : <></>
             }
         </>
     )
