@@ -12,13 +12,10 @@ function VoterRegisteredEvents() {
         ...votingContract,
         eventName: 'VoterRegistered',
         listener(log) {
-            console.log(log)
             const voterAddress = (log[0] as any).args.voterAddress;
-            console.log(voterAddress)
             if (isAddress(voterAddress) && voterList.find(x => x === voterAddress) === undefined) {
                 let tempList = voterList;
                 tempList.push(voterAddress)
-                console.log(voterList)
                 setVotersList(tempList)
             }
         },

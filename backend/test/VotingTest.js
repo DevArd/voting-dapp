@@ -279,7 +279,6 @@ describe("Voting contract", function () {
     it("Test on event: start proposal registering", async () => {
       const { voting, owner } = await deployVotingFixture();
       let status = await voting.workflowStatus.call();
-      console.log('oui', status)
       expect(status).to.be.equal(0);
       let startProposal = await voting.connect(owner).startProposalsRegistering();
       await expect(startProposal)

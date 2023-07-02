@@ -13,13 +13,10 @@ function ProposalRegisteredEvents() {
         ...votingContract,
         eventName: 'ProposalRegistered',
         listener(log) {
-            console.log(log)
             const proposalId = parseInt((log[0] as any).args.proposalId);
-            console.log(proposalId)
             if (proposalList.find(x => x === proposalId) === undefined) {
                 let tempList = proposalList;
                 tempList.push(proposalId)
-                console.log(proposalList)
                 setProposalList(tempList)
             }
         },

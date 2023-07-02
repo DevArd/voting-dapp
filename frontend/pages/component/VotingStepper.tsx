@@ -83,7 +83,6 @@ const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStep
             setAlerted(true);
         }
         if (isSuccess) {
-            console.log('callback')
             handleStepChanged();
         }
     }, [isLoading, isError, isSuccess]);

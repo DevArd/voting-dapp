@@ -17,7 +17,7 @@ function Proposal({ proposalId }: ProposalProps) {
     return (
         <>
             {
-                isSuccess ? <Chip key={proposalId} label={`${proposalId} - ${(data as any)?.description}`} /> : <></>
+                isSuccess ? <Chip key={proposalId} color="primary" variant="outlined" label={`${proposalId} - ${(data as any)?.description}`} /> : <></>
             }
         </>
     )

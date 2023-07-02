@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import AddProposal from './component/AddProposal'
 import AddVoter from './component/AddVoter'
-import GetWinningProposal from './component/GetWinningProposal'
+import WinningProposal from './component/WinningProposal'
 import SetVote from './component/SetVote'
 import VotingStepper from './component/VotingStepper'
 import { useAccount, useContractReads } from 'wagmi'
@@ -58,7 +58,6 @@ function Voting() {
         if (data?.[1].status === "success") {
             const currentStepId = parseInt(`${data?.[1].result}`)
             if (currentStepId > activeStep) {
-                console.log('currentStepId', currentStepId)
                 setActiveStep(currentStepId);
             }
         }
@@ -70,13 +69,11 @@ function Voting() {
             const isActiveAddressVoter = (data?.[3].result as any)?.isRegistered
             setIsVoter(isActiveAddressVoter)
         }
-        console.log('local data', isOwner, activeStep, winningProposalId, isVoter);
-        console.log('data', data, isError, error, isLoading, isSuccess);
+        console.log('voting data', data);
 
     }, [data, activeStep, address, error, isError, isLoading, isOwner, isSuccess, isVoter, winningProposalId]);
 
     const handleStepChanged = () => {
-        console.log('newstep', activeStep + 1)
         setActiveStep(activeStep + 1)
     };
 
@@ -90,7 +87,7 @@ function Voting() {
             {activeStep === 0 && isOwner ? <AddVoter /> : <></>}
             {activeStep === 1 && isVoter ? <AddProposal /> : <></>}
             {activeStep === 3 && isVoter ? <SetVote /> : <></>}
-            {activeStep === 4 ? <GetWinningProposal /> : <></>}
+            {activeStep === 4 ? <WinningProposal proposalId={winningProposalId} /> : <></>}
             <VoterRegisteredEvents />
             {activeStep >= 1 ? <ProposalRegisteredEvents /> : <></>}
 
