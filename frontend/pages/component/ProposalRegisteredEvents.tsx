@@ -30,7 +30,7 @@ function ProposalRegisteredEvents() {
         <>
             {
                 proposalList.length > 0 ? <Stack spacing={1}>
-                    <h3>Proposal's list</h3>
+                    <h3>Proposal&apos;s list</h3>
                     {
                         proposalList.length > 0 ? proposalList.map((proposalId, index) => <Proposal proposalId={proposalId} key={index} />) : <></>
                     }

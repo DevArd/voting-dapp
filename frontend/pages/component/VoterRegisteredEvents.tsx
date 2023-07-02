@@ -29,7 +29,7 @@ function VoterRegisteredEvents() {
     return (
         <>
             {voterList.length > 0 ? <Stack spacing={1}>
-                <h3>Voter's list</h3>
+                <h3>Voter&apos;s list</h3>
                 {
                     voterList.length > 0 ? voterList.map((voteraddress, index) => <Chip key={index} style={{ fontWeight: "bolder"}} color="primary" label={voteraddress} />) : <></>
                 }
