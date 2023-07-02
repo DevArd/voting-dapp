@@ -71,7 +71,6 @@ function Voting() {
             const isActiveAddressVoter = (data?.[3].result as any)?.isRegistered
             setIsVoter(isActiveAddressVoter)
         }
-        console.log('voting data', data);
 
     }, [data, activeStep, address, error, isError, isLoading, isOwner, isSuccess, isVoter, winningProposalId]);
 
