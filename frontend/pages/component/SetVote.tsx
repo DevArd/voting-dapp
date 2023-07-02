@@ -6,8 +6,17 @@ import { votingContract } from '../Voting';
 import SnackBarAlert from './SnackBarAlert';
 
 const SetVote = () => {
-  const [proposalId, setProposalId] = useState('')
+  const [proposalId, setProposalId] = useState<string>('')
   const [alerted, setAlerted] = useState(false);
+
+  const isValidId = (value: string): boolean => {
+    const intValue = parseInt(value);
+    if (intValue > 0) {
+      return true;
+    }
+
+    return false;
+  };
 
   const {
     config
@@ -15,7 +24,7 @@ const SetVote = () => {
     ...votingContract,
     functionName: 'setVote',
     args: [proposalId],
-    enabled: parseInt(proposalId) >= 0,
+    enabled: isValidId(proposalId),
   })
 
   const { data, error, isError, write } = useContractWrite(config)
@@ -37,8 +46,8 @@ const SetVote = () => {
     <Stack spacing={2} >
       <h3>Set vote</h3>
       <Stack sx={{ maxWidth: 400 }} direction="row" >
-        <TextField id="outlined-basic" label="Proposal identifier" value={proposalId} onChange={(e) => setProposalId(e.target.value)} />
-        <IconButton size="large" color="primary" disabled={!write} onClick={() => write?.()}>
+        <TextField id="outlined-basic" label="Proposal identifier" value={proposalId} onChange={(e) => setProposalId(e.target.value)} inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} />
+        <IconButton size="large" color="primary" disabled={!isValidId(proposalId)} onClick={() => write?.()}>
           <PlaylistAddCheckIcon fontSize="large" />
         </IconButton>
       </Stack>
