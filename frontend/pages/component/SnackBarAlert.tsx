@@ -10,7 +10,7 @@ interface EthereumNotif {
   onClose?: any;
 }
 
-export const SnackBarAlert = (notif: EthereumNotif) => {
+const SnackBarAlert = (notif: EthereumNotif) => {
   return (
     <>
       <Snackbar open={notif.isSuccess} autoHideDuration={6000} sx={{ maxWidth: '90%' }} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} onClose={notif.onClose}>
@@ -31,3 +31,5 @@ export const SnackBarAlert = (notif: EthereumNotif) => {
     </>
   )
 }
+
+export default SnackBarAlert

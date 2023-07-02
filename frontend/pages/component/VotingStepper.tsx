@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { Divider } from '@mui/material';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { votingContract } from '../Voting';
-import { SnackBarAlert } from './SnackBarAlert';
+import SnackBarAlert from './SnackBarAlert';
 
 const steps = [
     {
@@ -36,8 +36,8 @@ const steps = [
 ];
 
 interface VotingStepperProps {
-    initStepId: number;
-    onStepChanged: any;
+    currentStepId: number;
+    handleStepChanged: any;
 }
 
 const getNextStep = (currentStepId: number) => {
@@ -55,9 +55,7 @@ const getNextStep = (currentStepId: number) => {
     }
 }
 
-const VotingStepper = ({ initStepId: currentStepId, onStepChanged }: VotingStepperProps) => {
-    console.log('initStepId', currentStepId)
-    // const [activeStep, setActiveStep] = useState(initStepId);
+const VotingStepper = ({ currentStepId, handleStepChanged }: VotingStepperProps) => {
     const [alerted, setAlerted] = useState(false);
 
     const handleNext = () => {
@@ -84,7 +82,8 @@ const VotingStepper = ({ initStepId: currentStepId, onStepChanged }: VotingStepp
             setAlerted(true);
         }
         if (isSuccess) {
-            onStepChanged();
+            console.log('callback')
+            handleStepChanged();
         }
     }, [isLoading, isError, isSuccess]);
 

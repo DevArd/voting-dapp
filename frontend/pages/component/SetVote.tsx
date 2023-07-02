@@ -2,8 +2,8 @@ import { Divider, IconButton, Stack, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { SnackBarAlert } from './SnackBarAlert';
 import { votingContract } from '../Voting';
+import SnackBarAlert from './SnackBarAlert';
 
 const SetVote = () => {
   const [proposalId, setProposalId] = useState('')

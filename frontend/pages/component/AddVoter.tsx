@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi';
 import { isAddress } from 'viem'
-import { SnackBarAlert } from './SnackBarAlert';
 import { votingContract } from '../Voting';
+import SnackBarAlert from './SnackBarAlert';
 
 const AddVoter = () => {
   const [voter, setVoter] = useState('');
@@ -37,7 +37,7 @@ const AddVoter = () => {
   return (
     <Stack spacing={2}>
       <h3>Add voter</h3>
-      <Stack sx={{ maxWidth: 400 }} direction="row">
+      <Stack direction="row">
         <TextField id="outlined-basic" label="Voter address" value={voter} onChange={(e) => setVoter(e.target.value)} />
         <IconButton size="large" color="primary" disabled={!write} onClick={() => write?.()}>
           <PersonAddAlt1Icon fontSize="large" />

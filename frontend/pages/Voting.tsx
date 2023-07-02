@@ -6,8 +6,10 @@ import SetVote from './component/SetVote'
 import VotingStepper from './component/VotingStepper'
 import { useAccount, useContractReads } from 'wagmi'
 import { votingAbi, contract } from '../Constant';
-import { SnackBarAlert } from './component/SnackBarAlert'
 import { getAddress } from 'viem'
+import SnackBarAlert from './component/SnackBarAlert'
+import VoterRegisteredEvents from './component/VoterRegisteredEvents'
+import ProposalRegisteredEvents from './component/ProposalRegisteredEvents'
 
 export const votingContract = {
     address: contract,
@@ -18,12 +20,9 @@ function Voting() {
     const [alerted, setAlerted] = useState(false);
     const { address } = useAccount();
     const [activeStep, setActiveStep] = useState(0);
-    const [stepChanged, setStepChanged] = useState(false);
-
-    let isOwner: boolean = false;
-    let isVoter: boolean = false;
-    let currentStepId: number = 0;
-    let winningProposalId: number = 0;
+    const [isOwner, setIsOwner] = useState(false);
+    const [isVoter, setIsVoter] = useState(false);
+    const [winningProposalId, setWinningProposalId] = useState(0);
 
     const { data, isError, error, isLoading, isSuccess } = useContractReads({
         contracts: [
@@ -50,33 +49,36 @@ function Voting() {
 
     useEffect(() => {
         if (isLoading || isError || isSuccess) {
-            setAlerted(true);
+            setAlerted(true)
         }
         if (data?.[0].status === "success") {
-            isOwner = getAddress(`${data?.[0].result}`) === address
+            const isActiveAddressContractOwner = getAddress(`${data?.[0].result}`) === address
+            setIsOwner(isActiveAddressContractOwner)
         }
         if (data?.[1].status === "success") {
-            currentStepId = parseInt(`${data?.[1].result}`)
-            setActiveStep(currentStepId);
+            const currentStepId = parseInt(`${data?.[1].result}`)
+            if (currentStepId > activeStep) {
+                console.log('currentStepId', currentStepId)
+                setActiveStep(currentStepId);
+            }
         }
         if (data?.[2].status === "success") {
-            winningProposalId = parseInt(`${data?.[2].result}`)
+            const proposalId = parseInt(`${data?.[2].result}`)
+            setWinningProposalId(proposalId)
         }
         if (data?.[3].status === "success") {
-            isVoter = (data?.[3].result as any).isRegistered
+            const isActiveAddressVoter = (data?.[3].result as any)?.isRegistered
+            setIsVoter(isActiveAddressVoter)
         }
-        console.log('local data', isOwner, currentStepId, winningProposalId, isVoter);
+        console.log('local data', isOwner, activeStep, winningProposalId, isVoter);
         console.log('data', data, isError, error, isLoading, isSuccess);
 
-    }, [data]);
+    }, [data, activeStep, address, error, isError, isLoading, isOwner, isSuccess, isVoter, winningProposalId]);
 
-    useEffect(() => {
-        if (stepChanged) {
-            console.log('newstep', currentStepId + 1)
-            setActiveStep(currentStepId + 1)
-        }
-        setStepChanged(false)
-    }, [stepChanged]);
+    const handleStepChanged = () => {
+        console.log('newstep', activeStep + 1)
+        setActiveStep(activeStep + 1)
+    };
 
     const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
         setAlerted(false);
@@ -84,11 +86,14 @@ function Voting() {
 
     return (
         <>
-            <VotingStepper initStepId={activeStep} onStepChanged={() => setStepChanged(true)} />
-            {activeStep === 0 ? <AddVoter /> : <></>}
-            {activeStep === 1 ? <AddProposal /> : <></>}
-            {activeStep === 3 ? <SetVote /> : <></>}
+            <VotingStepper currentStepId={activeStep} handleStepChanged={() => handleStepChanged()} />
+            {activeStep === 0 && isOwner ? <AddVoter /> : <></>}
+            {activeStep === 1 && isVoter ? <AddProposal /> : <></>}
+            {activeStep === 3 && isVoter ? <SetVote /> : <></>}
             {activeStep === 4 ? <GetWinningProposal /> : <></>}
+            <VoterRegisteredEvents />
+            {activeStep >= 1 ? <ProposalRegisteredEvents /> : <></>}
+
             <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`All contract data successfully retrieve`} onClose={handleClose}></SnackBarAlert>
         </>
     )
