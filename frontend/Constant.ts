@@ -1,6 +1,6 @@
 import { Address, Narrow, Abi } from 'abitype';
 
-export const contract: Address = '0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1'; //'0x40ED11741F5d7F8d97BF3535E3Ba2c8D755ad858'
+export const contract: Address = '0x9E3dda3Ec8ea621a0036027dc6C63D63394B24F0'; //'0x40ED11741F5d7F8d97BF3535E3Ba2c8D755ad858'
 // export const contracthardhat = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
 export const votingAbi: Narrow<Abi> = [
     {
