@@ -1,5 +1,5 @@
-import { Avatar, Button, Chip, Divider, Stack } from '@mui/material'
-import React, { useEffect } from 'react'
+import { Avatar, Chip, Divider, Stack } from '@mui/material'
+import React from 'react'
 import { votingContract } from '../Voting'
 import { useContractRead } from 'wagmi'
 

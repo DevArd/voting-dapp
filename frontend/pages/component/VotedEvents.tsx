@@ -1,7 +1,6 @@
 import { votingContract } from '../Voting';
 import { useContractEvent } from 'wagmi';
 import React, { useEffect, useState } from 'react'
-import { isAddress } from 'viem';
 import { Chip, Divider, Stack } from '@mui/material';
 
 interface Voted {

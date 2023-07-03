@@ -5,11 +5,10 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Divider } from '@mui/material';
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
 import { votingContract } from '../Voting';
-import SnackBarAlert from './SnackBarAlert';
 
 const steps = [
     {
@@ -57,7 +56,6 @@ const getNextStep = (currentStepId: number) => {
 }
 
 const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStepperProps) => {
-    const [alerted, setAlerted] = useState(false);
 
     const handleNext = () => {
         write?.();
@@ -73,23 +71,16 @@ const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStep
         enabled: currentStepId === nextPhase.nextStepId - 1,
     })
 
-    const { data, error, isError, write } = useContractWrite(config)
-    const { isLoading, isSuccess } = useWaitForTransaction({
+    const { data, write } = useContractWrite(config)
+    const { isSuccess } = useWaitForTransaction({
         hash: data?.hash,
     })
 
     useEffect(() => {
-        if (isLoading || isError || isSuccess) {
-            setAlerted(true);
-        }
         if (isSuccess) {
             handleStepChanged();
         }
-    }, [isLoading, isError, isSuccess]);
-
-    const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
-        setAlerted(false);
-    };
+    }, [isSuccess]);
 
     return (
         <>
@@ -127,7 +118,6 @@ const VotingStepper = ({ currentStepId, handleStepChanged, isOwner }: VotingStep
                 </Stepper>
             </Box>
             <Divider />
-            <SnackBarAlert isSuccess={isSuccess && alerted} isLoading={isLoading && alerted} isError={isError && alerted} error={error} message={`Successfully gone on next step with transaction ${data?.hash}`} onClose={handleClose}></SnackBarAlert>
         </>
     );
 }
